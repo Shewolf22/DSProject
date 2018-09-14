@@ -1,14 +1,15 @@
-#include <stdio.h>
-#include <conio.h>
+#include<stdio.h>
+#include<conio.h>
 void mainmenu();
 void Add_book();
 void Delete_book();
 void Issue_book();
-
 int main()
 {
-   printf("\n\n\n\t\t\tLibrary Management System\n\n\n\n\n\t\t\t\t\t\t\t");
-   printf("\nPress Any Key To Continue");
+   
+   printf("\n\n\n\t*******Library Management System*******\n\n\t\t");
+   printf("Go To Main Menu");
+   printf("\nPress Any Key To Continue....");
    getch();
    mainmenu();
    return 0; 
@@ -17,54 +18,26 @@ int main()
 void mainmenu()
 {
    int choice;
+   char c;
    do{
-       printf("\n\n\t\t#####Main Menu#####\n\n\t\t\t\t\t\t\t");
-       printf("1.Add Books\n\t\t\t\t\t\t\t2.Delete Books\n\t\t\t\t\t\t\t3.Issue Books\n\t\t\t\t\t\t4.Exit");
+       printf("\n\n\t\t#####Main Menu#####\n\n\t\t");
+       printf("1.Add Books\n\t\t2.Delete Books\n\t\t3.Issue Books\n\t\t4.Exit");
+       printf("\nEnter your choice:");
        scanf("%d",&choice);
        switch(choice)
        {
-           case 1: do
-                    {
-                        Add_book();
-                        printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
-                        scanf("%c", &c);
-                    }while(c!='n'); 
+           case 1:
+                    
+           case 2:
+					
+           case 3: 
                 
-                
-                    break;
-           case 2: do
-		    {
-						
-		        Delete_book();
-			printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
-                        scanf("%c", &c);
-
-		    }while(c!='n');
-
-		     break;
-           case 3: do
-		    {
-			Issue_book();
-                        printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
-                        scanf("%c", &c);
-
-		    }while(c!='n');			
-                    break;
-					 
-           default:     printf ("\n\n\n\t\t\tPlease Enter a Valid Choice(1/2/3/4)");
-          
-        }
+           case 4:   exit(0);
+		   
+           default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4)");
+       }
    }while(choice!=4);
   
 }
-void Add_book(){
-   
-}
 
-void Delete_book(){
-   
-}
 
-void Issue_book(){
-   
-}
