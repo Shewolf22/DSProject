@@ -30,13 +30,13 @@ void mainmenu()
                 
                     break;
            case 2: do
-		     {
+		    {
 						
 		        Delete_book();
 			printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
                         scanf("%c", &c);
 
-		     }while(c!='n');
+		    }while(c!='n');
 
 		     break;
            case 3: do
@@ -45,7 +45,7 @@ void mainmenu()
                         printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
                         scanf("%c", &c);
 
-					}			
+		    }while(c!='n');			
                     break;
 					 
            default:     printf ("\n\n\n\t\t\tPlease Enter a Valid Choice(1/2/3/4)");
