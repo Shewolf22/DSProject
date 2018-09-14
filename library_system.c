@@ -1,9 +1,12 @@
-#include<stdio.h>
-#include<conio.h>
+#include <stdio.h>
+#include <conio.h>
 void mainmenu();
+void Add_book();
+void Delete_book();
+void Issue_book();
+
 int main()
 {
-   clrscr();
    printf("\n\n\n\t\t\tLibrary Management System\n\n\n\n\n\t\t\t\t\t\t\t");
    printf("\nPress Any Key To Continue");
    getch();
@@ -53,4 +56,15 @@ void mainmenu()
         }
    }while(choice!=4);
   
+}
+void Add_book(){
+   
+}
+
+void Delete_book(){
+   
+}
+
+void Issue_book(){
+   
 }
