@@ -23,7 +23,6 @@ void mainmenu()
            case 1: do
                     {
                         Add_book();
-                    
                         printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
                         scanf("%c", &c);
                     }while(c!='n'); 
@@ -31,29 +30,27 @@ void mainmenu()
                 
                     break;
            case 2: do
-		            {
+		     {
 						
-						Delete_book();
-						printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
+		        Delete_book();
+			printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
                         scanf("%c", &c);
 
-					}while(c!='n');
+		     }while(c!='n');
 
-					break;
-		   case 3: do
-		            {
-						Issue_book();
+		     break;
+           case 3: do
+		    {
+			Issue_book();
                         printf("\n\n\n\t\t\tDo you want to continue? [y\\n]");
                         scanf("%c", &c);
 
 					}			
                     break;
 					 
-		    default:     printf ("\n\n\n\t\t\tPlease Enter a Valid Choice(1/2/3/4)");
+           default:     printf ("\n\n\n\t\t\tPlease Enter a Valid Choice(1/2/3/4)");
           
-        
-
-       }
+        }
    }while(choice!=4);
   
 }
