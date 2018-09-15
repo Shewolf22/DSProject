@@ -1,3 +1,33 @@
+/*
+getBookData() function gets the details of the book from the user
+
+writeToFile() writes the book details to a file called "data.txt"
+This is the format in which the book details are written:
+<Book name>|<Author>|<Book ID>
+All the spaces are replaced by underscores during writing for convenience
+The details are separated by '|'
+For example:
+Art_Of_War|Sun_Tzu|001
+
+readFromFile() reads all the data from the "data.txt" file and adds every book to a linked list
+For example:
+This is the data.txt file:
+"The_Art_Of_War|Sun_Tzu|001
+The_God_Delusion|Some_Atheist_idk|002
+Let_Us_C|Yashwant_Kanetkar|003"
+readFromFile() will then create a linked list with 3 nodes that contain the details of these three books
+
+I've made the structure of the book named Book, please follow the same variable names when you code so that
+there's no confusion in the end
+
+I will compile this file with the main menu, and make a version that everyone can add to it
+
+Please use comments to describe your files like this, so that its easier to understand what's going on and there's less confusion
+
+Compile and check if your files are running, before uploading them, if there's an error, make a comment at that line and mention
+the problem there
+*/
+
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
