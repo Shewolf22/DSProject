@@ -23,11 +23,12 @@ typedef struct node{
 node *START = NULL;
 typedef struct dnode   // a doubly linked list
         {
-           char bookid;
+           char bookid[MAX];
            int issuedate;
            struct dnode *next,*prev;
         }dnode;
-dnode *issue_record(char bi,int issda,dnode *head);
+
+dnode *issue_record(char *bi,int issda,dnode *head);
 int ntbe(int bi,dnode *head);
 char* currtime();
 float finecalc(int,int);
@@ -44,7 +45,7 @@ void readFromFile();
 int main()
 {
     int isd,cd;char bi[MAX];float fineamount;
-    node *head;
+    dnode *head = NULL;
     Book new;
     char c = 'y';
     int sw;
@@ -65,12 +66,13 @@ int main()
         case 2: readFromFile();
                 display();
                 break;
-        case 3: printf("enter the book id");
-                gets(bi);
+        case 3: printf("enter the book id\n");
+                fflush(stdin);
+                fgets(bi, MAX, stdin);
                 isd=datecalc();
                 head=issue_record(bi,isd,head);
                 break;
-        case 4: printf("enter the bookid");
+        case 4: printf("enter the bookid\n");
                 gets(bi);
                 isd=find_issue_date(bi,head);
                 cd=datecalc;
@@ -132,11 +134,11 @@ int find_issue_date(dnode *head,int bi)
 
 
 
- dnode *issue_record(char bi,int issda,dnode *head)
+ dnode *issue_record(char *bi,int issda,dnode *head)
     {
         dnode *p,*q;
         p=(dnode*)malloc(sizeof(dnode));
-        p->bookid=bi;
+        strcpy(p->bookid, bi);
         p->issuedate=issda;
         if(head==NULL)
         {
@@ -330,4 +332,3 @@ void replaceUnder(char *c)
         }
     }
 }
-
