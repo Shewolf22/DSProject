@@ -22,7 +22,7 @@ readFromFile() will then create a linked list with 3 nodes that contain the deta
 
 General Instructions:
 1. Please use the same variable names as everyone else, so that there's no confusion about what's doing what
-2. Please use comments to describe your files like this, so that its easier to understand what's going on and there's less confusion
+2. Please use comments to describe your code like this, so that its easier to understand what's going on and there's less confusion
 3. Compile and check if your files are running, before uploading them, if there's an error, make a comment at that line and mention
 the problem there
 4. Please use this file as the base file when writing your code, write your code in this file only
