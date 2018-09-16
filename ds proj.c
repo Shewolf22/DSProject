@@ -19,8 +19,8 @@ typedef struct node{
     Book book;
     struct node *next;
 }node;
-
 node *START = NULL;
+
 typedef struct dnode   // a doubly linked list
         {
            char bookid[MAX];
@@ -42,6 +42,7 @@ void display();
 void getBookData(Book *);
 void writeToFile(Book *);
 void readFromFile();
+
 int main()
 {
     int isd,cd;char bi[MAX];float fineamount;
@@ -56,12 +57,11 @@ int main()
     scanf("%d", &sw);
     switch(sw)
     {
-        case 1:     printf("Enter the details yo\n");
-                    getBookData(&new);
-                    writeToFile(&new);
-                    printf("Do you want to continue? [y\\n]");
-                    scanf("%c", &c);
-                    //clrscr();
+        case 1: printf("Enter the details yo\n");
+                getBookData(&new);
+                writeToFile(&new);
+                printf("Do you want to continue? [y\\n]");
+                scanf("%c", &c);
                 break;
         case 2: readFromFile();
                 display();
@@ -73,9 +73,10 @@ int main()
                 head=issue_record(bi,isd,head);
                 break;
         case 4: printf("enter the bookid\n");
-                gets(bi);
-                isd=find_issue_date(bi,head);
-                cd=datecalc;
+                fflush(stdin);
+                fgets(bi, MAX, stdin);
+                isd=find_issue_date(head, bi);
+                cd=datecalc();
                 if(isd==-1)
                 {
                     printf("book not found\n");
@@ -116,7 +117,7 @@ int find_issue_date(dnode *head,int bi)
 {
     dnode *q;
     q=head;
-    while(q->bookid!=bi&&q!=NULL)
+    while(q->bookid!=bi && q->next!=NULL)
     {
         q=q->next;
     }
@@ -130,9 +131,6 @@ int find_issue_date(dnode *head,int bi)
     }
 
 }
-
-
-
 
  dnode *issue_record(char *bi,int issda,dnode *head)
     {
