@@ -1,7 +1,6 @@
 /*
 Summary of the code:
 1. getBookData() - Function gets the details of the book from the user
-
 2. writeToFile() - Writes the book details to a file called "data.txt"
 This is the format in which the book details are written:
 <Book name>|<Author>|<Book ID>
@@ -9,7 +8,6 @@ All the spaces are replaced by underscores during writing for convenience
 The details are separated by '|'
 For example:
 Art_Of_War|Sun_Tzu|001
-
 3. readFromFile() - Reads all the data from the "data.txt" file and adds every book to a linked list
 For example:
 This is the data.txt file:
@@ -17,9 +15,7 @@ This is the data.txt file:
 The_God_Delusion|Some_Atheist_idk|002
 Let_Us_C|Yashwant_Kanetkar|003"
 readFromFile() will then create a linked list with 3 nodes that contain the details of these three books
-
 4. mainmenu() - Displays the main menu of the program
-
 General Instructions:
 1. Please use the same variable names as everyone else, so that there's no confusion about what's doing what
 2. Please use comments to describe your code like this, so that its easier to understand what's going on and there's less confusion
@@ -29,7 +25,6 @@ the problem there
 5. Update your file as soon as it gets updated on GitHub so that we have everyone's code in here and nobody's code gets deleted
 6. Debugging can be hard, have patience and everything will work
 7. Update the above list of functions if you add new functions to the file
-
 Cheers! :)
 */
 
@@ -57,6 +52,7 @@ node *START = NULL;
 
 node *create(Book, node*);
 void insert(Book);
+void addBook(Book);
 void replaceSpaces(char *);
 void replaceUnder(char *);
 void display();
@@ -85,16 +81,21 @@ void getBookData(Book *new_book)
     printf("Enter the book title\n");
     fgets(new_book->title, MAX, stdin);
     new_book->title[strcspn(new_book->title, "\n")] = 0; //Replaces the \n character at the end with \0
-    replaceSpaces(new_book->title);
+    //replaceSpaces(new_book->title);
 
     printf("Enter the author\n");
     fgets(new_book->author, MAX, stdin);
     new_book->author[strcspn(new_book->author, "\n")] = 0;
-    replaceSpaces(new_book->author);
+    //replaceSpaces(new_book->author);
 
     printf("Enter the book ID\n");
     fgets(new_book->ID, MAX, stdin);
     new_book->ID[strcspn(new_book->ID, "\n")] = 0;
+}
+
+void addBook(Book newBook)
+{
+    insert(newBook);
 }
 
 //Writes the book details to data.txt
@@ -107,6 +108,8 @@ void writeToFile(Book *b)
     }
     else
     {
+        replaceSpaces(b->title);
+        replaceSpaces(b->author);
         fprintf(fp, "%s|%s|%s\n", b->title, b->author, b->ID);
     }
     fclose(fp);
@@ -118,7 +121,7 @@ void readFromFile()
     fp = fopen("data.txt", "r");
     if(fp == NULL)
     {
-        printf("Error\n");
+        printf("Error\n"); //Remove this line in the final version of the code
     }
     else
     {
@@ -188,12 +191,37 @@ void insert(Book b)
     else
     {
         cursor = START;
-        while(cursor->next != NULL)
+        newnode = (node *)malloc(sizeof(node));
+        newnode->book = b;
+
+        if(strcmp(newnode->book.title, cursor->book.title) < 0)
+        {
+            START = newnode;
+            newnode->next = cursor;
+            cursor->next = NULL;
+        }
+        else
+        {
+            while((strcmp(cursor->book.title, newnode->book.title) < 0) && (cursor->next != NULL))
+            {
+                cursor = cursor->next;
+            }
+
+            if(cursor->next == NULL)
+            {
+                newnode->next = NULL;
+                cursor->next = newnode;
+            }
+            else
+            {
+
+            }
+        }
+        /*while(cursor->next != NULL)
         {
             cursor = cursor->next;
         }
-        newnode = create(b, NULL);
-        cursor->next = newnode;
+        cursor->next = newnode;*/
     }
 }
 
@@ -236,9 +264,10 @@ void replaceUnder(char *c)
 
 void mainmenu()
 {
-    Book new;
+    Book newBook;
     int choice;
-    char c;
+
+    readFromFile();
     do
     {
         printf("\n\n\t\t#####Main Menu#####\n\n\t\t");
@@ -247,24 +276,24 @@ void mainmenu()
         scanf("%d",&choice);
         switch(choice)
         {
-            case 1: getBookData(&new);
-                    writeToFile(&new);
-                    break;
-                    
-            case 2: //Incomplete
-                    break;
-					
-            case 3: //Sneha add you functions here
-                    break;
-            
-            case 4: readFromFile();
-                    display();
+            case 1: getBookData(&newBook);
+                    addBook(newBook);
                     break;
 
-            case 5:   exit(0);
-		   
+            case 2: //Incomplete
+                    break;
+
+            case 3: //Sneha add you functions here
+                    break;
+
+            case 4: display();
+                    break;
+
+            case 5: //writeToFile();
+                    exit(0);
+
             default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4)");
        }
    }while(choice!=5);
-  
+
 }
