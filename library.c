@@ -47,12 +47,15 @@ typedef struct book{
 typedef struct node{
     Book book;
     struct node *next;
+    struct node *prev;
 }node;
 node *START = NULL;
 
 node *create(Book, node*);
 void insert(Book);
 void addBook(Book);
+void deleteBook(Book);
+void clearMemory();
 void replaceSpaces(char *);
 void replaceUnder(char *);
 void display();
@@ -170,7 +173,7 @@ node* create(Book b,node* next)
     node* new_node = (node*)malloc(sizeof(node));
     if(new_node == NULL)
     {
-        printf("Error creating a new node.\n");
+        printf("Error creating a new node\n");
         exit(0);
     }
     new_node->book = b;
@@ -191,39 +194,35 @@ void insert(Book b)
     else
     {
         cursor = START;
-        newnode = (node *)malloc(sizeof(node));
-        newnode->book = b;
-
-        if(strcmp(newnode->book.title, cursor->book.title) < 0)
-        {
-            START = newnode;
-            newnode->next = cursor;
-            cursor->next = NULL;
-        }
-        else
-        {
-            while((strcmp(cursor->book.title, newnode->book.title) < 0) && (cursor->next != NULL))
-            {
-                cursor = cursor->next;
-            }
-
-            if(cursor->next == NULL)
-            {
-                newnode->next = NULL;
-                cursor->next = newnode;
-            }
-            else
-            {
-
-            }
-        }
-        /*while(cursor->next != NULL)
+        while(cursor->next != NULL)
         {
             cursor = cursor->next;
         }
-        cursor->next = newnode;*/
+
+        newnode =  create(b, NULL);
+        cursor->next = newnode; 
     }
 }
+
+/*void clearMemory()
+ {
+     node *cursor, *temp;
+     while(START != NULL)
+     {
+         cursor = START;
+         while(cursor->next != NULL)
+         {
+             cursor = cursor->next;
+         }
+         temp = cursor->prev;
+         if(temp != NULL)
+         {
+             temp->next = NULL;
+         }
+
+         free(cursor);
+     }
+ }*/
 
 void display()
 {
@@ -286,14 +285,15 @@ void mainmenu()
             case 3: //Sneha add you functions here
                     break;
 
-            case 4: display();
+            case 4: readFromFile();
+                    display();
                     break;
 
             case 5: //writeToFile();
+                    //clearMemory();
                     exit(0);
 
             default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4)");
        }
    }while(choice!=5);
-
 }
