@@ -55,12 +55,12 @@ node *create(Book, node*);
 void insert(Book);
 void addBook(Book);
 void deleteBook(Book);
-void clearMemory();
+void clearList();
 void replaceSpaces(char *);
 void replaceUnder(char *);
 void display();
 void getBookData(Book *);
-void writeToFile(Book *);
+void writeToFile();
 void readFromFile();
 void mainmenu();
 
@@ -101,19 +101,31 @@ void addBook(Book newBook)
     insert(newBook);
 }
 
-//Writes the book details to data.txt
-void writeToFile(Book *b)
+//Writes the book details from the linked list to data.txt
+void writeToFile()
 {
-    fp = fopen("data.txt", "a");
+    Book b;
+    node *cursor;
+    fp = fopen("data.txt", "w");
     if(fp == NULL)
     {
         printf("Error\n");
     }
     else
     {
-        replaceSpaces(b->title);
-        replaceSpaces(b->author);
-        fprintf(fp, "%s|%s|%s\n", b->title, b->author, b->ID);
+        cursor = START;
+        if(START != NULL)
+        {
+            while(cursor != NULL)
+            {
+                b = cursor->book;
+                replaceSpaces(b.title);
+                replaceSpaces(b.author);
+                fprintf(fp, "%s|%s|%s\n", b.title, b.author, b.ID);
+                cursor = cursor->next;
+            }
+        }
+        
     }
     fclose(fp);
 }
@@ -204,25 +216,10 @@ void insert(Book b)
     }
 }
 
-/*void clearMemory()
+void clearList()
  {
-     node *cursor, *temp;
-     while(START != NULL)
-     {
-         cursor = START;
-         while(cursor->next != NULL)
-         {
-             cursor = cursor->next;
-         }
-         temp = cursor->prev;
-         if(temp != NULL)
-         {
-             temp->next = NULL;
-         }
-
-         free(cursor);
-     }
- }*/
+     START= NULL;
+ }
 
 void display()
 {
@@ -270,7 +267,7 @@ void mainmenu()
     do
     {
         printf("\n\n\t\t#####Main Menu#####\n\n\t\t");
-        printf("1.Add Books\n\t\t2.Delete Books\n\t\t3.Issue Books\n\t\t4.Display\n\t\t5.Exit");
+        printf("1.Add Books\n\t\t2.Delete Books\n\t\t3.Clear List\n\t\t4.Display\n\t\t5.Exit");
         printf("\nEnter your choice:");
         scanf("%d",&choice);
         switch(choice)
@@ -283,14 +280,14 @@ void mainmenu()
                     break;
 
             case 3: //Sneha add you functions here
+                    clearList();
                     break;
 
-            case 4: readFromFile();
-                    display();
+            case 4: display();
                     break;
 
-            case 5: //writeToFile();
-                    //clearMemory();
+            case 5: writeToFile();
+                    //clearList();
                     exit(0);
 
             default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4)");
