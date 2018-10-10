@@ -30,6 +30,7 @@ Cheers! :)
 
 #include <stdio.h>
 #include <conio.h>
+#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #define MAX 100
@@ -40,10 +41,8 @@ typedef struct book{
     char title[MAX];
     char author[MAX];
     char ID[MAX];
-    //insert the issue record linked list node here later lmao
 }Book;
 
-//This is a temporary linked list to store the data read from the data.txt file because idk shit about trees
 typedef struct node{
     Book book;
     struct node *next;
@@ -51,9 +50,17 @@ typedef struct node{
 }node;
 node *START = NULL;
 
+typedef struct dnode
+{
+    char bookid[MAX];
+    int issuedate;
+    int issuemonth;
+    struct dnode *next,*prev;
+}dnode;
+
 node *create(Book, node*);
+dnode *issue_record(char *bi,int issda,int ism,dnode *head);
 void insert(Book);
-void addBook(Book);
 void deleteBook(Book);
 void clearList();
 void replaceSpaces(char *);
@@ -62,6 +69,12 @@ void display();
 void getBookData(Book *);
 void writeToFile();
 void readFromFile();
+int ntbe(int bi,dnode *head);
+char* currtime();
+void finecalc(int,int,int,int);
+int datecalc();
+int find_issue_date(dnode *head,char[MAX]);
+int find_issue_month(dnode *head,char[MAX]);
 void mainmenu();
 
 int main()
@@ -84,21 +97,14 @@ void getBookData(Book *new_book)
     printf("Enter the book title\n");
     fgets(new_book->title, MAX, stdin);
     new_book->title[strcspn(new_book->title, "\n")] = 0; //Replaces the \n character at the end with \0
-    //replaceSpaces(new_book->title);
 
     printf("Enter the author\n");
     fgets(new_book->author, MAX, stdin);
     new_book->author[strcspn(new_book->author, "\n")] = 0;
-    //replaceSpaces(new_book->author);
 
     printf("Enter the book ID\n");
     fgets(new_book->ID, MAX, stdin);
     new_book->ID[strcspn(new_book->ID, "\n")] = 0;
-}
-
-void addBook(Book newBook)
-{
-    insert(newBook);
 }
 
 //Writes the book details from the linked list to data.txt
@@ -258,39 +264,299 @@ void replaceUnder(char *c)
     }
 }
 
+int datecalc()
+{ 
+    int dd;
+    char subdate[2];
+    int c=0,d=2,p;
+    char sn[100];
+    time_t ct;
+    ct=time(NULL);
+    char* cts;
+    cts=ctime(&ct);
+    strcpy(sn,cts);
+    p=9;
+    while(c<d)
+    {
+        subdate[c]=sn[p+c-1];
+        c++;
+    }
+    subdate[c]='\0';
+    dd=atoi(subdate);
+
+    return dd;
+}
+
+int monthcalc()
+    {
+    char submonth[2];
+    int c=0,m=3,p;
+    char sn[100];
+    time_t ct;
+    ct=time(NULL);
+    char* cts;
+    cts=ctime(&ct);
+    strcpy(sn,cts);
+    p=5;
+    while(c<3)
+    {
+        submonth[c]=sn[p+c-1];
+        c++;
+    }
+    submonth[c]='\0';
+    if(strcmp(submonth,"Jan")==0)
+    {
+        return 1;
+    }else
+    if(strcmp(submonth,"Feb")==0)
+    {
+        return 2;
+    }else
+    if(strcmp(submonth,"Mar")==0)
+    {
+        return 3;
+    }else
+    if(strcmp(submonth,"Apr")==0)
+    {
+        return 4;
+    }else
+    if(strcmp(submonth,"May")==0)
+    {
+        return 5;
+    }else
+    if(strcmp(submonth,"Jun")==0)
+    {
+        return 6;
+    }else
+    if(strcmp(submonth,"Jul")==0)
+    {
+        return 7;
+    }else
+    if(strcmp(submonth,"Aug")==0)
+    {
+        return 8;
+    }else
+    if(strcmp(submonth,"Sep")==0)
+    {
+        return 9;
+    }else
+    if(strcmp(submonth,"Oct")==0)
+    {
+        return 10;
+    }else
+    if(strcmp(submonth,"Nov")==0)
+    {
+        return 11;
+    }else
+    if(strcmp(submonth,"Dec")==0)
+    {
+        return 12;
+    }
+
+}
+
+void currentdate()
+ {
+    time_t ct;
+    ct=time(NULL);
+    char* cts;
+    cts=ctime(&ct);
+    printf("%s",cts);
+}
+
+
+void finecalc(issuedate,issuemonth,curdate,curmonth)
+{
+    fflush(stdin);
+    float fine=0.0;
+    if((issuedate+10)<=curdate&&issuemonth==curmonth)
+    {
+       fine=0.0;
+    }
+    if((curmonth-issuemonth)<2&&(curmonth-issuemonth)!=0)
+    {
+        fine=((30-issuedate)+(curdate))*5;
+    }
+    if((curmonth-issuemonth)>2)
+    {
+        fine=(curmonth-issuemonth)*30*5+curdate*5;
+    }
+
+    printf("fine to b paid:::::%f",fine);
+
+}
+
+int find_issue_date(dnode *head,char bi[])
+{
+    dnode *q;
+    q=head;
+
+    while(strcmp(q->bookid,bi)==0 && q->next!=NULL)
+    {
+        q=q->next;
+    }
+
+    if(strcmp(q->bookid,bi)==0)
+    {
+        return (q->issuedate);
+    }
+    else if(q==NULL)
+    {
+        return -1;
+    }
+}
+
+int find_issue_month(dnode *head,char bi[])
+{
+    dnode *q;
+    q=head;
+
+    while(strcmp(q->bookid,bi)==0 && q->next!=NULL)
+    {
+        q=q->next;
+    }
+
+    if(strcmp(q->bookid,bi)==0)
+    {
+        return (q->issuemonth);
+    }
+    else if(q==NULL)
+    {
+        return -1;
+    }
+}
+
+dnode *issue_record(char *bi,int issda,int im,dnode *head)
+{
+
+    dnode *p,*q;
+    p=(dnode*)malloc(sizeof(dnode));
+    strcpy(p->bookid, bi);
+    p->issuedate=issda;
+    p->issuemonth=im;
+
+    if(head==NULL)
+    {
+        head=p;
+        p->prev=NULL;
+        p->next=NULL;
+    }
+    else
+    {
+        q=head;
+        
+        while(q->next!=NULL)
+        {
+            q=q->next;
+        }
+
+        q->next=p;
+        p->prev=q;
+        p->next=NULL;
+    }
+
+    return(head);
+}
+
+void displayir(dnode *head)
+{
+    dnode *p;
+    p=head;
+    while(p!=NULL)
+    {
+        printf("book id::%s\t",p->bookid);
+        printf("issue date ::%d\t",p->issuedate);
+        printf("issue month::%d\t",p->issuemonth);
+        printf("\n");
+        p=p->next;
+    }
+}
+
+//CALCULATES THE NUMBER OF TIMES A BOOK IS ISSUED ---- IT ACCEPTS THE BOOKID FOR THIS PURPOSE
+int ntbe(int nbi,dnode *head)
+{
+    dnode *p;
+    p=head;
+    int count=0;
+
+    while(p->next!=NULL)
+    {
+        if(p->bookid==nbi)
+        {
+            count++;
+        }
+        p=p->next;
+    }
+
+    if(p->bookid==nbi)
+    {
+        count++;
+    }
+    
+    return count;
+}
+
 void mainmenu()
 {
     Book newBook;
     int choice;
+    int isd,cd,im,cm,ism;char bi[MAX];float fineamount=0.0;
+    dnode *head = NULL;
 
     readFromFile();
     do
     {
         printf("\n\n\t\t#####Main Menu#####\n\n\t\t");
-        printf("1.Add Books\n\t\t2.Delete Books\n\t\t3.Clear List\n\t\t4.Display\n\t\t5.Exit");
+        printf("1.Add Books\n\t\t2.Delete Books\n\t\t3.Issue Books\n\t\t4.Return Books\n\t\t5.Display Books\n\t\t6.Display Issue Records\n\t\t7.Exit");
         printf("\nEnter your choice:");
         scanf("%d",&choice);
+
         switch(choice)
         {
             case 1: getBookData(&newBook);
-                    addBook(newBook);
+                    insert(newBook);
                     break;
 
             case 2: //Incomplete
                     break;
 
-            case 3: //Sneha add you functions here
-                    clearList();
+            case 3: printf("enter the book id\n");
+                    fflush(stdin);
+                    fgets(bi, MAX, stdin);
+                    isd=datecalc();
+                    im=monthcalc();
+                    head=issue_record(bi,isd,im,head);
                     break;
 
-            case 4: display();
+            case 4: printf("enter the bookid\n");
+                    fflush(stdin);
+                    fgets(bi, MAX, stdin);
+                    isd=find_issue_date(head, bi);
+                    ism=find_issue_month(head, bi);
+                    cd=datecalc();
+                    cm=monthcalc();
+                    printf("current date::%d\n",cd);
+                    printf("issue date:::%d\n",isd);
+                    printf("current month::%d\n",cm);
+                    printf("issue month:::%d\n",ism);
+                    if(isd==-1)
+                    {
+                        printf("book not found\n");
+                    }
+
+                    finecalc(isd,ism,cd,cm);
                     break;
 
-            case 5: writeToFile();
-                    //clearList();
+            case 5: display();
+                    break;
+            
+            case 6: displayir(head);
+                    break;
+            
+            case 7: writeToFile();
                     exit(0);
 
-            default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4)");
-       }
-   }while(choice!=5);
+            default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4/5/6/7)");
+        }
+    }while(choice!=7);
 }
