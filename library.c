@@ -1,33 +1,3 @@
-/*
-Summary of the code:
-1. getBookData() - Function gets the details of the book from the user
-2. writeToFile() - Writes the book details to a file called "data.txt"
-This is the format in which the book details are written:
-<Book name>|<Author>|<Book ID>
-All the spaces are replaced by underscores during writing for convenience
-The details are separated by '|'
-For example:
-Art_Of_War|Sun_Tzu|001
-3. readFromFile() - Reads all the data from the "data.txt" file and adds every book to a linked list
-For example:
-This is the data.txt file:
-"The_Art_Of_War|Sun_Tzu|001
-The_God_Delusion|Some_Atheist_idk|002
-Let_Us_C|Yashwant_Kanetkar|003"
-readFromFile() will then create a linked list with 3 nodes that contain the details of these three books
-4. mainmenu() - Displays the main menu of the program
-General Instructions:
-1. Please use the same variable names as everyone else, so that there's no confusion about what's doing what
-2. Please use comments to describe your code like this, so that its easier to understand what's going on and there's less confusion
-3. Compile and check if your files are running, before uploading them, if there's an error, make a comment at that line and mention
-the problem there
-4. Please use this file as the base file when writing your code, write your code in this file only
-5. Update your file as soon as it gets updated on GitHub so that we have everyone's code in here and nobody's code gets deleted
-6. Debugging can be hard, have patience and everything will work
-7. Update the above list of functions if you add new functions to the file
-Cheers! :)
-*/
-
 #include <stdio.h>
 #include <conio.h>
 #include <time.h>
@@ -61,8 +31,7 @@ typedef struct dnode
 node *create(Book, node*);
 dnode *issue_record(char *bi,int issda,int ism,dnode *head);
 void insert(Book);
-void deleteBook(Book);
-void clearList();
+void deleteBook(char *);
 void replaceSpaces(char *);
 void replaceUnder(char *);
 void display();
@@ -72,12 +41,14 @@ void readFromFile();
 void writeIssueRecords(dnode *head);
 dnode *readIssueRecords(dnode *head);
 int ntbe(int bi,dnode *head);
-char* currtime();
 void finecalc(int,int,int,int);
 int datecalc();
+void currentdate();
 int find_issue_date(dnode *head,char[MAX]);
 int find_issue_month(dnode *head,char[MAX]);
+int isPresent(char *);
 void mainmenu();
+
 
 int main()
 {
@@ -144,7 +115,7 @@ void readFromFile()
     fp = fopen("data.txt", "r");
     if(fp == NULL)
     {
-        printf("Error\n"); //Remove this line in the final version of the code
+        printf("Error\n");
     }
     else
     {
@@ -188,6 +159,7 @@ void readFromFile()
     fclose(fp);
 }
 
+//Allocates space and initializes a new node
 node* create(Book b,node* next)
 {
     node* new_node = (node*)malloc(sizeof(node));
@@ -202,6 +174,7 @@ node* create(Book b,node* next)
     return new_node;
 }
 
+//Creates a new node in the books linked list
 void insert(Book b)
 {
     node *newnode, *cursor;
@@ -224,11 +197,7 @@ void insert(Book b)
     }
 }
 
-void clearList()
-{
-     START= NULL;
-}
-
+//Displays the books
 void display()
 {
     node *cursor;
@@ -239,6 +208,40 @@ void display()
         printf("Book Author: %s\t\t", cursor->book.author);
         printf("Book ID: %s\n", cursor->book.ID);
         cursor = cursor->next;
+    }
+}
+
+//Deletes a book from the list
+void deleteBook(char *id)
+{
+    node *cursor, *pre;
+
+    if(START == NULL)
+    {
+        printf("No books found\n");
+    }
+    else
+    {
+        cursor = pre = START;
+        while((strcmp(cursor->book.ID, id) != 0) && (cursor->next != NULL))
+        {
+            pre = cursor;
+            cursor = cursor->next;
+        }
+
+        if(strcmp(cursor->book.ID, id) == 0)
+        {
+            if(cursor == START)
+                START = cursor->next;
+            else
+                pre->next = cursor->next;
+            printf("Book succesfully deleted\n");
+            free(cursor);
+        }
+        else
+        {
+            printf("Book not found\n");
+        }
     }
 }
 
@@ -354,7 +357,6 @@ int monthcalc()
     {
         return 12;
     }
-
 }
 
 void currentdate()
@@ -384,7 +386,7 @@ void finecalc(issuedate,issuemonth,curdate,curmonth)
         fine=(curmonth-issuemonth)*30*5+curdate*5;
     }
 
-    printf("fine to b paid:::::%.2f",fine);
+    printf("Fine to be paid: %.2f",fine);
 }
 
 int find_issue_date(dnode *head,char bi[])
@@ -392,16 +394,16 @@ int find_issue_date(dnode *head,char bi[])
     dnode *q;
     q=head;
 
-    while(strcmp(q->bookid,bi)==0 && q->next!=NULL)
+    while(strcmp(q->bookid, bi)!=0 && q->next!=NULL)
     {
         q=q->next;
     }
 
-    if(strcmp(q->bookid,bi)==0)
+    if(strcmp(q->bookid, bi)==0)
     {
         return (q->issuedate);
     }
-    else if(q==NULL)
+    else
     {
         return -1;
     }
@@ -412,21 +414,22 @@ int find_issue_month(dnode *head,char bi[])
     dnode *q;
     q=head;
 
-    while(strcmp(q->bookid,bi)==0 && q->next!=NULL)
+    while(strcmp(q->bookid, bi)!=0 && q->next!=NULL)
     {
         q=q->next;
     }
 
-    if(strcmp(q->bookid,bi)==0)
+    if(strcmp(q->bookid, bi)==0)
     {
-        return (q->issuemonth);
+        return(q->issuemonth);
     }
-    else if(q==NULL)
+    else
     {
         return -1;
     }
 }
 
+//Creates a new node in the issue records linked list
 dnode *issue_record(char *bi,int issda,int im,dnode *head)
 {
     dnode *p,*q;
@@ -458,6 +461,7 @@ dnode *issue_record(char *bi,int issda,int im,dnode *head)
     return(head);
 }
 
+//Displays the issue records
 void displayir(dnode *head)
 {
     dnode *p;
@@ -495,6 +499,7 @@ int ntbe(int nbi,dnode *head)
     return count;
 }
 
+//Writes the issue records to issuerec.txt file
 void writeIssueRecords(dnode *head)
 {
     dnode *cursor;
@@ -519,21 +524,13 @@ void writeIssueRecords(dnode *head)
     fclose(fp);
 }
 
-/*
-typedef struct dnode
-{
-    char bookid[MAX];
-    int issuedate;
-    int issuemonth;
-    struct dnode *next,*prev;
-}dnode;
-*/
+//Reads the issue records from the file and stores it in a linked list
 dnode *readIssueRecords(dnode *head)
 {
     fp = fopen("issuerec.txt", "r");
     if(fp == NULL)
     {
-        printf("Error\n"); //Remove this line in the final version of the code
+        printf("Error\n");
     }
     else
     {
@@ -552,6 +549,7 @@ dnode *readIssueRecords(dnode *head)
             id[i] = '\0';
 
             i++;
+            //Extract the issue day
             while(temp1[i] != '|')
             {
                 temp2[j] = temp1[i];
@@ -563,6 +561,7 @@ dnode *readIssueRecords(dnode *head)
             isdate = atoi(temp2);
 
             i++;
+            //Extract the issue month
             while(temp1[i] != '\0')
             {
                 temp2[j] = temp1[i];
@@ -571,12 +570,29 @@ dnode *readIssueRecords(dnode *head)
             }
             temp2[j] = '\0';
             ism = atoi(temp2);
-
+            
+            //Add entry to the issue records linked list
             head = issue_record(id, isdate, ism, head);
         }
     }
     fclose(fp);
     return head;
+}
+
+int isPresent(char *id)
+{
+    node *cursor = START;
+    int flag = 0;
+
+    while(cursor->next != NULL)
+    {
+        if(strcmp(id, cursor->book.ID) == 0)
+            flag = 1;
+        
+        cursor = cursor->next;
+    }
+
+    return flag;
 }
 
 void mainmenu()
@@ -601,36 +617,51 @@ void mainmenu()
                     insert(newBook);
                     break;
 
-            case 2: //Incomplete
-                    break;
-
-            case 3: printf("enter the book id\n");
+            case 2: printf("Enter the book ID of the book you want to delete\n");
                     fflush(stdin);
                     fgets(bi, MAX, stdin);
                     bi[strcspn(bi, "\n")] = 0; //Replaces the '\n' at the end with '\0'
-                    isd=datecalc();
-                    im=monthcalc();
-                    head=issue_record(bi,isd,im,head);
+                    deleteBook(bi);
                     break;
 
-            case 4: printf("enter the bookid\n");
+            case 3: printf("Enter the book ID\n");
+                    fflush(stdin);
+                    fgets(bi, MAX, stdin);
+                    bi[strcspn(bi, "\n")] = 0; //Replaces the '\n' at the end with '\0'
+
+                    //To check if the book is actually present in the database
+                    if(isPresent(bi))
+                    {
+                        isd=datecalc();
+                        im=monthcalc();
+                        head=issue_record(bi,isd,im,head);
+                    }
+                    else
+                        printf("Book not found\n");
+                    
+                    break;
+
+            case 4: printf("Enter the book ID\n");
                     fflush(stdin);
                     fgets(bi, MAX, stdin);
                     bi[strcspn(bi, "\n")] = 0; //Replaces the '\n' at the end with '\0'
                     isd=find_issue_date(head, bi);
                     ism=find_issue_month(head, bi);
-                    cd=datecalc();
-                    cm=monthcalc();
-                    printf("current date::%d\n",cd);
-                    //printf("issue date:::%d\n",isd);
-                    printf("current month::%d\n",cm);
-                    //printf("issue month:::%d\n",ism);
                     if(isd==-1)
                     {
-                        printf("book not found\n");
+                        printf("Book not found\n");
                     }
-
-                    finecalc(isd,ism,cd,cm);
+                    else
+                    {
+                        cd=datecalc();
+                        cm=monthcalc();
+                        printf("current date::%d\n",cd);
+                        //printf("issue date:::%d\n",isd);
+                        printf("current month::%d\n",cm);
+                        //printf("issue month:::%d\n",ism);
+                    
+                        finecalc(isd,ism,cd,cm);
+                    }
                     break;
 
             case 5: display();
