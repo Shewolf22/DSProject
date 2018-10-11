@@ -69,6 +69,8 @@ void display();
 void getBookData(Book *);
 void writeToFile();
 void readFromFile();
+void writeIssueRecords(dnode *head);
+dnode *readIssueRecords(dnode *head);
 int ntbe(int bi,dnode *head);
 char* currtime();
 void finecalc(int,int,int,int);
@@ -223,9 +225,9 @@ void insert(Book b)
 }
 
 void clearList()
- {
+{
      START= NULL;
- }
+}
 
 void display()
 {
@@ -288,7 +290,7 @@ int datecalc()
 }
 
 int monthcalc()
-    {
+{
     char submonth[2];
     int c=0,m=3,p;
     char sn[100];
@@ -356,7 +358,7 @@ int monthcalc()
 }
 
 void currentdate()
- {
+{
     time_t ct;
     ct=time(NULL);
     char* cts;
@@ -364,7 +366,7 @@ void currentdate()
     printf("%s",cts);
 }
 
-
+// the fine calculation function
 void finecalc(issuedate,issuemonth,curdate,curmonth)
 {
     fflush(stdin);
@@ -382,8 +384,7 @@ void finecalc(issuedate,issuemonth,curdate,curmonth)
         fine=(curmonth-issuemonth)*30*5+curdate*5;
     }
 
-    printf("fine to b paid:::::%f",fine);
-
+    printf("fine to b paid:::::%.2f",fine);
 }
 
 int find_issue_date(dnode *head,char bi[])
@@ -428,7 +429,6 @@ int find_issue_month(dnode *head,char bi[])
 
 dnode *issue_record(char *bi,int issda,int im,dnode *head)
 {
-
     dnode *p,*q;
     p=(dnode*)malloc(sizeof(dnode));
     strcpy(p->bookid, bi);
@@ -464,10 +464,9 @@ void displayir(dnode *head)
     p=head;
     while(p!=NULL)
     {
-        printf("book id::%s\t",p->bookid);
-        printf("issue date ::%d\t",p->issuedate);
-        printf("issue month::%d\t",p->issuemonth);
-        printf("\n");
+        printf("Book ID:: %s\t\t",p->bookid);
+        printf("Issue Day :: %d\t\t",p->issuedate);
+        printf("Issue Month:: %d\n",p->issuemonth);
         p=p->next;
     }
 }
@@ -492,8 +491,92 @@ int ntbe(int nbi,dnode *head)
     {
         count++;
     }
-    
+
     return count;
+}
+
+void writeIssueRecords(dnode *head)
+{
+    dnode *cursor;
+
+    fp = fopen("issuerec.txt", "w");
+    if(fp == NULL)
+    {
+        printf("Error\n");
+    }
+    else
+    {
+        cursor = head;
+        if(START != NULL)
+        {
+            while(cursor != NULL)
+            {
+                fprintf(fp, "%s|%d|%d\n", cursor->bookid, cursor->issuedate, cursor->issuemonth);
+                cursor = cursor->next;
+            }
+        }
+    }
+    fclose(fp);
+}
+
+/*
+typedef struct dnode
+{
+    char bookid[MAX];
+    int issuedate;
+    int issuemonth;
+    struct dnode *next,*prev;
+}dnode;
+*/
+dnode *readIssueRecords(dnode *head)
+{
+    fp = fopen("issuerec.txt", "r");
+    if(fp == NULL)
+    {
+        printf("Error\n"); //Remove this line in the final version of the code
+    }
+    else
+    {
+        char temp1[MAX], temp2[MAX], id[MAX];
+        int ism, isdate, i, j;
+        while(fscanf(fp, "%s\n", temp1) != EOF)
+        {
+            i = 0;
+            j = 0;
+            //Extract the Book ID
+            while(temp1[i] != '|')
+            {
+                id[i] = temp1[i];
+                i++;
+            }
+            id[i] = '\0';
+
+            i++;
+            while(temp1[i] != '|')
+            {
+                temp2[j] = temp1[i];
+                i++;
+                j++;
+            }
+            temp2[j] = '\0';
+            j = 0;
+            isdate = atoi(temp2);
+
+            i++;
+            while(temp1[i] != '\0')
+            {
+                temp2[j] = temp1[i];
+                i++;
+                j++;
+            }
+            temp2[j] = '\0';
+            ism = atoi(temp2);
+
+            head = issue_record(id, isdate, ism, head);
+        }
+    }
+    fclose(fp);
+    return head;
 }
 
 void mainmenu()
@@ -504,6 +587,7 @@ void mainmenu()
     dnode *head = NULL;
 
     readFromFile();
+    head = readIssueRecords(head);
     do
     {
         printf("\n\n\t\t#####Main Menu#####\n\n\t\t");
@@ -523,6 +607,7 @@ void mainmenu()
             case 3: printf("enter the book id\n");
                     fflush(stdin);
                     fgets(bi, MAX, stdin);
+                    bi[strcspn(bi, "\n")] = 0; //Replaces the '\n' at the end with '\0'
                     isd=datecalc();
                     im=monthcalc();
                     head=issue_record(bi,isd,im,head);
@@ -531,14 +616,15 @@ void mainmenu()
             case 4: printf("enter the bookid\n");
                     fflush(stdin);
                     fgets(bi, MAX, stdin);
+                    bi[strcspn(bi, "\n")] = 0; //Replaces the '\n' at the end with '\0'
                     isd=find_issue_date(head, bi);
                     ism=find_issue_month(head, bi);
                     cd=datecalc();
                     cm=monthcalc();
                     printf("current date::%d\n",cd);
-                    printf("issue date:::%d\n",isd);
+                    //printf("issue date:::%d\n",isd);
                     printf("current month::%d\n",cm);
-                    printf("issue month:::%d\n",ism);
+                    //printf("issue month:::%d\n",ism);
                     if(isd==-1)
                     {
                         printf("book not found\n");
@@ -554,6 +640,7 @@ void mainmenu()
                     break;
             
             case 7: writeToFile();
+                    writeIssueRecords(head);
                     exit(0);
 
             default:  printf ("\n\tPlease Enter a Valid Choice(1/2/3/4/5/6/7)");
